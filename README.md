@@ -19,7 +19,7 @@ Shown in this Diagramm:
 ---
 >Detailed Information see my   
 >[HC3 Documentation](https://joern-karthaus.de/heatingControl/heatingControl3.html) on my Blog  
->[More Photos from Blog](https://joern-karthaus.de/heatingContr1ol/hc3images.html)  
+>[More Photos from Blog](https://joern-karthaus.de/heatingControl/hc3images.html)  
 ...sorry only in German ;-)
 ---
 
