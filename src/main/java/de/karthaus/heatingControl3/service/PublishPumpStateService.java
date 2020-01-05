@@ -28,7 +28,11 @@ public class PublishPumpStateService {
 	private HeatingControlContext heatingControlContext;
 
 	/**
-	 * 
+	 *
+	 * This class holds a local PumpState Object and compares this to
+	 * the PumpState object from the Global heatingControlConext.
+	 * If the Pump States differ then the new State send out to Message Bus via
+	 * the Messageproducer
 	 * @param pumpMessageProducer
 	 * @param pumpState
 	 * @param heatingControlContext
