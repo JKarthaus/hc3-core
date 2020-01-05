@@ -49,8 +49,7 @@ public class CheckPumpService {
      */
     @Scheduled(fixedDelay = "30s", initialDelay = "5s")
     public void checkPump() {
-        logger.debug("Check Pump condition Temp : {} > {} ", heatingControlContext.getTemp_combustionChamber(), garageMinTemp);
-
+        logger.info("Check Pump conditions... Temp");
         // Condition I switch Pump ON
         if (heatingControlContext.getTemp_combustionChamber() > heatingControlContext.getBufferTemperature()) {
             pumpState.setPumpHeating(Boolean.TRUE);
