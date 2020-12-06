@@ -3,6 +3,7 @@
 The **hc3-core** Microservice contains the Business Logic of the
 **HeatingControl3** Project.
 
+
 This Microservice receive Data (Temperatures) from other Microservices via aqmp 
 and send Data to :  
 1. the LCD MS
