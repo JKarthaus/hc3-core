@@ -1,7 +1,4 @@
-FROM openjdk:8u171-alpine3.7
-
+FROM adoptopenjdk/openjdk13-openj9:jdk-13.0.2_8_openj9-0.18.0-alpine-slim
 COPY build/libs/hc3-core-*-all.jar hc3-core.jar
-
 EXPOSE 8080
-
-CMD java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Dcom.sun.management.jmxremote -noverify ${JAVA_OPTS} -jar hc3-core.jar
+CMD ["java", "-Dcom.sun.management.jmxremote", "-Xmx128m", "-XX:+IdleTuningGcOnIdle", "-Xtune:virtualized", "-jar", "hc3-core.jar"]
