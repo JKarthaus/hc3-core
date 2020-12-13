@@ -6,9 +6,9 @@
 
 echo "Build and Push Docker"
 
-cowsay "Pull last changes from Git"
+#cowsay "Pull last changes from Git"
 
-git pull
+#git pull
 
 cowsay "Build with Gradle"
 
