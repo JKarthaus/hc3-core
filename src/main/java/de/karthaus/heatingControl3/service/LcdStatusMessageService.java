@@ -1,6 +1,9 @@
 package de.karthaus.heatingControl3.service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import javax.inject.Singleton;
@@ -44,7 +47,8 @@ public class LcdStatusMessageService {
 		this.lcdStatusMessageProducer = lcdStatusMessageProducer;
 		this.heatingControlContext = heatingControlContext;
 		this.pumpState = pumpState;
-		formatter = new SimpleDateFormat("dd.MM HH:mm:ss");
+
+		formatter = new SimpleDateFormat( "dd.MM HH:mm:ss");
 	}
 
 	@Scheduled(fixedDelay = "3s")
@@ -62,7 +66,10 @@ public class LcdStatusMessageService {
 			return;
 		}
 		// -- Build Status Messages...
-		text = "1=HC3->" + formatter.format(new Date());
+		Instant instant = Instant.now();
+		ZoneId zoneId = ZoneId.of( "Europe/Berlin" );
+		ZonedDateTime zdt = ZonedDateTime.ofInstant( instant , zoneId );
+		text = "1=HC3->" + formatter.format(zdt);
 		logger.info("Sending {} to lcd queue " + text);
 		lcdStatusMessageProducer.send(text.getBytes());
 		// --
