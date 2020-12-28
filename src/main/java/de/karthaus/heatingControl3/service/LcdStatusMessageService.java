@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.inject.Singleton;
@@ -33,7 +34,7 @@ public class LcdStatusMessageService {
 
 	private PumpState pumpState;
 
-	private SimpleDateFormat formatter;
+	private DateTimeFormatter formatter;
 
 	/**
 	 * 
@@ -48,7 +49,7 @@ public class LcdStatusMessageService {
 		this.heatingControlContext = heatingControlContext;
 		this.pumpState = pumpState;
 
-		formatter = new SimpleDateFormat( "dd.MM HH:mm:ss");
+		formatter = DateTimeFormatter.ISO_TIME;
 	}
 
 	@Scheduled(fixedDelay = "3s")
@@ -69,7 +70,7 @@ public class LcdStatusMessageService {
 		Instant instant = Instant.now();
 		ZoneId zoneId = ZoneId.of( "Europe/Berlin" );
 		ZonedDateTime zdt = ZonedDateTime.ofInstant( instant , zoneId );
-		text = "1=HC3->" + formatter.format(zdt);
+		text = "1=HC3->" + zdt.format(formatter);
 		logger.info("Sending {} to lcd queue " + text);
 		lcdStatusMessageProducer.send(text.getBytes());
 		// --
