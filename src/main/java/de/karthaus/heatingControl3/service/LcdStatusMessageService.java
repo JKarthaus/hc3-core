@@ -49,7 +49,7 @@ public class LcdStatusMessageService {
 		this.heatingControlContext = heatingControlContext;
 		this.pumpState = pumpState;
 
-		formatter = DateTimeFormatter.ISO_TIME;
+		formatter = DateTimeFormatter.ISO_LOCAL_TIME;
 	}
 
 	@Scheduled(fixedDelay = "3s")
