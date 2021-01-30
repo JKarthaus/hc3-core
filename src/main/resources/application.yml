@@ -1,33 +1,33 @@
 micronaut:
-   application:
-      name: hc3-core
+  application:
+    name: hc3-core
 # Message Bus configuration - DEV Enviroment
 rabbitmq:
-   host: hc3-werkstatt
-   port: 5672
+  host: hc3-werkstatt
+  port: 5672
 # Programm configuration
 hc3:
-   temperature-queue:
-      name: hc-temperature
-   relais-exchange:
-      name: hc-relais-hat
-   sensor:
-      combustion: 22-000000336328
-      leading-line: not_installed
-      return-line: not_installed
-      buffer: 22-000000337836
-      garage: 22-000000337836
-   pump:
-      garage:
-         gpio-id: 22
-         min-temp: 10
-      heating:
-         gpio-id: 12
-
-   ssh:
-      username: pi
-      password: raspberry
-      host: hc3-werkstatt
+  temperature-queue:
+    name: hc-temperature
+  relais-exchange:
+    name: hc-relais-hat
+  sensor:
+    combustion: 28-0214630d20ff
+    leading-line: not_installed
+    return-line: not_installed
+    buffer: 28-0214631220ff
+    garage: 28-03146209ceff
+  pump:
+    garage:
+      relais-id: 1
+      min-temp: 15
+    heating:
+      relais-id: 2
+      switch-on-temp: 45
+  ssh:
+    username: pi
+    password: raspberry
+    host: hc3-werkstatt
       
       
       

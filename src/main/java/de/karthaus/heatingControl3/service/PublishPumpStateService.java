@@ -15,10 +15,10 @@ public class PublishPumpStateService {
 
 	private PumpMessageProducer pumpMessageProducer;
 
-	@Value("${hc3.pump.garage.gpio-id}")
+	@Value("${hc3.pump.garage.relais-id}")
 	protected Integer garagePumpGpioPin;
 
-	@Value("${hc3.pump.heating.gpio-id}")
+	@Value("${hc3.pump.heating.relais-id}")
 	protected Integer heatingPumpGpioPin;
 
 	private PumpState localPumpState;
@@ -90,11 +90,15 @@ public class PublishPumpStateService {
 
 	/**
 	 * 
-	 * @param gpIoPin
-	 * @param value
+	 * @param relaisId
+	 * @param booleanState
 	 */
-	private void sendMessage(int gpIoPin, boolean value) {
-		String data = "" + gpIoPin + "=" + value;
+	private void sendMessage(int relaisId, boolean booleanState) {
+		String state = "OFF";
+		if (booleanState) {
+			state = "ON";
+		}
+		String data = "" + relaisId + "=" + state;
 		pumpMessageProducer.send(data.getBytes());
 	}
 
