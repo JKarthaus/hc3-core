@@ -1,5 +1,5 @@
 ![](https://joern-karthaus.de/heatingControl/img/hc3logo-small.png)
-# hc3-core
+# hc3-core 
 The **hc3-core** Microservice contains the Business Logic of the
 **HeatingControl3** Project.
 
