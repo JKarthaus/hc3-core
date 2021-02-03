@@ -24,6 +24,7 @@ hc3:
     heating:
       relais-id: 2
       switch-on-temp: 45
+      min-diff-temp: 5
   ssh:
     username: pi
     password: raspberry

@@ -10,6 +10,7 @@ import de.karthaus.heatingControl3.model.HeatingControlContext;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.scheduling.annotation.Scheduled;
 
+
 /**
  * Main Class for heatingControl3
  * Buisiness logic
@@ -24,10 +25,13 @@ public class CheckPumpService {
     @Value("${hc3.pump.garage.min-temp}")
     protected int garageMinTemp;
 
+    @Value("${hc3.pump.heating.min-diff-temp}")
+    protected int minDiffTemp;
+
     private HeatingControlContext heatingControlContext;
     private PumpState pumpState;
 
-     /**
+    /**
      * @param heatingControlContext
      */
     public CheckPumpService(
@@ -51,16 +55,20 @@ public class CheckPumpService {
     public void checkPump() {
         logger.info("Check Pump conditions... Temp");
         // Condition I switch Pump ON
-        if (heatingControlContext.getTemp_combustionChamber() > heatingControlContext.getBufferTemperature()) {
+        if (heatingControlContext.getTemp_combustionChamber()
+                > (heatingControlContext.getBufferTemperature() + minDiffTemp)
+        ) {
             pumpState.setPumpHeating(Boolean.TRUE);
             logger.info("Pump Heating -> ON");
             pumpState.setPumpGarage(Boolean.TRUE);
             logger.info("Pump Garage -> ON because Heating is ON");
         } else {
             pumpState.setPumpHeating(Boolean.FALSE);
-            logger.info("Pump Heating OFF, becauce Temp Combustion Chamber {} Temp Buffer {}",
+            logger.info("Pump Heating OFF, becauce Temp Combustion Chamber Temp:{} not > Temp Buffer:{} + {}",
                     heatingControlContext.getTemp_combustionChamber(),
-                    heatingControlContext.getBufferTemperature());
+                    heatingControlContext.getBufferTemperature(),
+                    minDiffTemp
+            );
             // ConditionII switch Pump OFF
             if (heatingControlContext.getGarageTemperature() < garageMinTemp) {
                 pumpState.setPumpGarage(Boolean.TRUE);
