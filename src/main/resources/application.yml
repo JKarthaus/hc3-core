@@ -20,7 +20,7 @@ hc3:
   pump:
     garage:
       relais-id: 1
-      min-temp: 15
+      min-temp: 11
     heating:
       relais-id: 2
       switch-on-temp: 45
