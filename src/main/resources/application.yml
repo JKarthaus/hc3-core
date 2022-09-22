@@ -7,6 +7,10 @@ rabbitmq:
   port: 5672
 # Programm configuration
 hc3:
+  influxdb:
+    url: http://hc3-werkstatt:8086
+    username: hc3
+    password: hc3
   temperature-queue:
     name: hc-temperature
   relais-exchange:
@@ -29,6 +33,5 @@ hc3:
     username: pi
     password: raspberry
     host: hc3-werkstatt
-      
       
       
