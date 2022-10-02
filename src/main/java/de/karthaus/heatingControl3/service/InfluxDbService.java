@@ -9,6 +9,8 @@ import com.influxdb.client.domain.WritePrecision;
 import de.karthaus.heatingControl3.model.HeatingControlContext;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.scheduling.annotation.Scheduled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
@@ -16,6 +18,8 @@ import java.time.Instant;
 
 @Singleton
 public class InfluxDbService {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Value("${hc3.influxdb.url}")
     protected String influxDbUrl;
@@ -41,6 +45,7 @@ public class InfluxDbService {
 
     @PostConstruct
     private void init() {
+        logger.info("Try to connect to InfluxDB at:{}", influxDbUrl);
         influxDBClient = InfluxDBClientFactory.createV1(
                 influxDbUrl,
                 influxDbUsername,
@@ -54,6 +59,11 @@ public class InfluxDbService {
 
     @Scheduled(fixedDelay = "1m")
     public void persistContext() {
+        if (!influxDBClient.ping()) {
+            logger.warn("influxdb is NOT Connected - try to connect");
+            init();
+            return;
+        }
         InfluxTemperature temperature = new InfluxTemperature();
         temperature.location = "bufferTemp";
         temperature.value = heatingControlContext.getBufferTemperature();
@@ -80,7 +90,7 @@ public class InfluxDbService {
         }
         influxPumpState.location = "heating";
         influxPumpState.time = Instant.now();
-        writeApi.writeMeasurement(WritePrecision.NS, temperature);
+        writeApi.writeMeasurement(WritePrecision.NS, influxPumpState);
         // -
         influxPumpState = new InfluxPumpState();
         if (pumpState.isPumpGarage()) {
@@ -90,7 +100,9 @@ public class InfluxDbService {
         }
         influxPumpState.location = "garage";
         influxPumpState.time = Instant.now();
-        writeApi.writeMeasurement(WritePrecision.NS, temperature);
+        writeApi.writeMeasurement(WritePrecision.NS, influxPumpState);
+        // --------------
+        logger.info("Write Measurements pumpState and temperature.");
     }
 
 
