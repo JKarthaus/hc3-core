@@ -11,95 +11,110 @@ import io.micronaut.scheduling.annotation.Scheduled;
 
 public class PublishPumpStateService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private PumpMessageProducer pumpMessageProducer;
+    private PumpMessageProducer pumpMessageProducer;
 
-	@Value("${hc3.pump.garage.relais-id}")
-	protected Integer garagePumpGpioPin;
+    @Value("${hc3.pump.garage.relais-id}")
+    protected Integer garagePumpGpioPin;
 
-	@Value("${hc3.pump.heating.relais-id}")
-	protected Integer heatingPumpGpioPin;
+    @Value("${hc3.pump.heating.relais-id}")
+    protected Integer heatingPumpGpioPin;
 
-	private PumpState localPumpState;
+    @Value("${hc3.pump.mainCircuit.relais-id}")
+    protected Integer mainCircuitPumpGpioPin;
 
-	private PumpState pumpState;
+    private PumpState localPumpState;
 
-	private HeatingControlContext heatingControlContext;
+    private PumpState pumpState;
 
-	/**
-	 *
-	 * This class holds a local PumpState Object and compares this to
-	 * the PumpState object from the Global heatingControlConext.
-	 * If the Pump States differ then the new State send out to Message Bus via
-	 * the Messageproducer
-	 * @param pumpMessageProducer
-	 * @param pumpState
-	 * @param heatingControlContext
-	 */
-	public PublishPumpStateService(
-			PumpMessageProducer pumpMessageProducer,
-			PumpState pumpState,
-			HeatingControlContext heatingControlContext) {
-		this.pumpMessageProducer = pumpMessageProducer;
-		this.heatingControlContext = heatingControlContext;
-		this.pumpState = pumpState;
-	}
+    private HeatingControlContext heatingControlContext;
 
-	/**
-	 * 
-	 */
-	@Scheduled(fixedDelay = "5s", initialDelay = "5s")
-	public void checkState() {
-		// check if shutdown is requestet...
-		if (heatingControlContext.isShutdownRequestet()) {
-			sendMessage(garagePumpGpioPin, false);
-			sendMessage(heatingPumpGpioPin, false);
-			logger.info("Shutdown requestet -> Switch all Pumps off");
-			return;
-		}
-		// --
-		boolean stateChanged = false;
-		if (localPumpState == null) {
-			localPumpState = new PumpState();
-			logger.info("Send initial Pump State out of Message Bus");
-			localPumpState.setPumpGarage(pumpState.isPumpGarage());
-			localPumpState.setPumpHeating(pumpState.isPumpHeating());
-			sendMessage(garagePumpGpioPin, localPumpState.isPumpGarage());
-			sendMessage(heatingPumpGpioPin, localPumpState.isPumpHeating());
-		} else {
-			if (localPumpState.isPumpGarage() != pumpState.isPumpGarage()) {
-				logger.info("State for Pump Garage changed from {} to {} ", localPumpState.isPumpGarage(), pumpState.isPumpGarage());
-				localPumpState.setPumpGarage(pumpState.isPumpGarage());
-				sendMessage(garagePumpGpioPin, localPumpState.isPumpGarage());
-				logger.info("Change State of Garage Pump to {}", pumpState.isPumpGarage());
-				stateChanged = true;
-			}
-			if (localPumpState.isPumpHeating() != pumpState.isPumpHeating()) {
-				logger.info("State for Pump Heating changed from {} to {} ", localPumpState.isPumpHeating(), pumpState.isPumpHeating());
-				localPumpState.setPumpHeating(pumpState.isPumpHeating());
-				sendMessage(heatingPumpGpioPin, localPumpState.isPumpHeating());
-				logger.info("Change State of Heating Pump to {}", pumpState.isPumpHeating());
-				stateChanged = true;
-			}
-		}
-		if (!stateChanged) {
-			logger.debug("Nothing changed on Pump state...");
-		}
-	}
+    /**
+     * This class holds a local PumpState Object and compares this to
+     * the PumpState object from the Global heatingControlConext.
+     * If the Pump States differ then the new State send out to Message Bus via
+     * the Messageproducer
+     *
+     * @param pumpMessageProducer
+     * @param pumpState
+     * @param heatingControlContext
+     */
+    public PublishPumpStateService(
+            PumpMessageProducer pumpMessageProducer,
+            PumpState pumpState,
+            HeatingControlContext heatingControlContext) {
+        this.pumpMessageProducer = pumpMessageProducer;
+        this.heatingControlContext = heatingControlContext;
+        this.pumpState = pumpState;
+    }
 
-	/**
-	 * 
-	 * @param relaisId
-	 * @param booleanState
-	 */
-	private void sendMessage(int relaisId, boolean booleanState) {
-		String state = "OFF";
-		if (booleanState) {
-			state = "ON";
-		}
-		String data = "" + relaisId + "=" + state;
-		pumpMessageProducer.send(data.getBytes());
-	}
+    /**
+     *
+     */
+    @Scheduled(fixedDelay = "5s", initialDelay = "5s")
+    public void checkState() {
+        // check if shutdown is requestet...
+        if (heatingControlContext.isShutdownRequestet()) {
+            sendMessage(garagePumpGpioPin, false);
+            sendMessage(heatingPumpGpioPin, false);
+            logger.info("Shutdown requestet -> Switch all Pumps off");
+            return;
+        }
+        // --
+        boolean stateChanged = false;
+        if (localPumpState == null) {
+            localPumpState = new PumpState();
+            logger.info("Send initial Pump State out of Message Bus");
+            localPumpState.setPumpGarage(pumpState.isPumpGarage());
+            localPumpState.setPumpHeating(pumpState.isPumpHeating());
+            localPumpState.setPumpMainCircuit(pumpState.isPumpMainCircuit());
+            //--
+            sendMessage(garagePumpGpioPin, localPumpState.isPumpGarage());
+            sendMessage(heatingPumpGpioPin, localPumpState.isPumpHeating());
+            sendMessage(mainCircuitPumpGpioPin, localPumpState.isPumpMainCircuit());
+        } else {
+            if (localPumpState.isPumpGarage() != pumpState.isPumpGarage()) {
+                logger.info("State for Pump Garage changed from {} to {} ", localPumpState.isPumpGarage(), pumpState.isPumpGarage());
+                localPumpState.setPumpGarage(pumpState.isPumpGarage());
+                sendMessage(garagePumpGpioPin, localPumpState.isPumpGarage());
+                logger.info("Change State of Garage Pump to {}", pumpState.isPumpGarage());
+                stateChanged = true;
+            }
+            if (localPumpState.isPumpHeating() != pumpState.isPumpHeating()) {
+                logger.info("State for Pump Heating changed from {} to {} ", localPumpState.isPumpHeating(), pumpState.isPumpHeating());
+                localPumpState.setPumpHeating(pumpState.isPumpHeating());
+                sendMessage(heatingPumpGpioPin, localPumpState.isPumpHeating());
+                logger.info("Change State of Heating Pump to {}", pumpState.isPumpHeating());
+                stateChanged = true;
+            }
+            if (localPumpState.isPumpMainCircuit() != pumpState.isPumpMainCircuit()) {
+                logger.info("State for Pump mainCircuit changed from {} to {} ",
+                        localPumpState.isPumpMainCircuit(),
+                        pumpState.isPumpMainCircuit()
+                );
+                localPumpState.setPumpMainCircuit(pumpState.isPumpMainCircuit());
+                sendMessage(mainCircuitPumpGpioPin, localPumpState.isPumpMainCircuit());
+                logger.info("Change State of mainCircuit Pump to {}", pumpState.isPumpMainCircuit());
+                stateChanged = true;
+            }
+        }
+        if (!stateChanged) {
+            logger.debug("Nothing changed on Pump state...");
+        }
+    }
+
+    /**
+     * @param relaisId
+     * @param booleanState
+     */
+    private void sendMessage(int relaisId, boolean booleanState) {
+        String state = "OFF";
+        if (booleanState) {
+            state = "ON";
+        }
+        String data = "" + relaisId + "=" + state;
+        pumpMessageProducer.send(data.getBytes());
+    }
 
 }
