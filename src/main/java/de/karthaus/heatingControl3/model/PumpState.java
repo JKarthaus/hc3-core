@@ -5,23 +5,44 @@ import javax.inject.Singleton;
 @Singleton
 public class PumpState {
 
-	boolean pumpHeating;
+    /*
+     * Pump between Heating and Buffer
+     */
+    boolean pumpHeating;
 
-	boolean pumpGarage;
-	public boolean isPumpHeating() {
-		return pumpHeating;
-	}
+    /**
+     * Pump for Garage radiator
+     */
+    boolean pumpGarage;
 
-	public void setPumpHeating(boolean pumpHeating) {
-		this.pumpHeating = pumpHeating;
-	}
 
-	public boolean isPumpGarage() {
-		return pumpGarage;
-	}
+    /**
+     * Pump for House Main circuit
+     */
+    boolean pumpMainCircuit;
 
-	public void setPumpGarage(boolean pumpGarage) {
-		this.pumpGarage = pumpGarage;
-	}
+    public boolean isPumpHeating() {
+        return pumpHeating;
+    }
 
+    public void setPumpHeating(boolean pumpHeating) {
+        this.pumpHeating = pumpHeating;
+    }
+
+    public boolean isPumpGarage() {
+        return pumpGarage;
+    }
+
+    public void setPumpGarage(boolean pumpGarage) {
+        this.pumpGarage = pumpGarage;
+    }
+
+    public boolean isPumpMainCircuit() {
+        return pumpMainCircuit;
+    }
+
+    public PumpState setPumpMainCircuit(boolean pumpMainCircuit) {
+        this.pumpMainCircuit = pumpMainCircuit;
+        return this;
+    }
 }
