@@ -21,7 +21,7 @@ public class PublishPumpStateService {
     @Value("${hc3.pump.heating.relais-id}")
     protected Integer heatingPumpGpioPin;
 
-    @Value("${hc3.pump.mainCircuit.relais-id}")
+    @Value("${hc3.pump.main-circuit.relais-id}")
     protected Integer mainCircuitPumpGpioPin;
 
     private PumpState localPumpState;
