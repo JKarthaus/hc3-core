@@ -32,7 +32,7 @@ hc3:
     main-circuit:
       relais-id: 3
       switch-on-temp: 47
-      time-range-from: "5:20"
+      time-range-from: "05:20"
       time-range-until: "22:10"
   ssh:
     username: pi
