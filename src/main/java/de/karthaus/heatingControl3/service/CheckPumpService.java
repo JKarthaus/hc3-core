@@ -116,8 +116,8 @@ public class CheckPumpService {
          *          mainCircuitPump ->  OFF
          */
         if (heatingControlContext.getBufferTemperature() > mainCircuitPumpSwitchOnTemp
-                && LocalTime.now().isAfter(LocalTime.parse(mainCircuitPumpTimeRangeFrom))
-                && LocalTime.now().isBefore(LocalTime.parse(mainCircuitPumpTimeRangeUntil))
+                && LocalTime.now().isAfter(LocalTime.parse("5:20"))
+                && LocalTime.now().isBefore(LocalTime.parse("22:10"))
         ) {
             pumpState.setPumpMainCircuit(Boolean.TRUE);
             logger.info("Pump mainCircuit -> ON because we are in time range from:{} until:{} and temp Buffer > {}",
