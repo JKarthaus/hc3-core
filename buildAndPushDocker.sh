@@ -13,6 +13,12 @@ echo "Build and Push Docker"
 cowsay "Build with Gradle"
 
 ./gradlew build
+gradlew_return_code=$?
+
+if ((gradlew_return_code != 0)); then
+  echo "Gradle build FAILED"
+  exit 2
+fi
 
 cowsay "Build and Push Docker Image"
 
