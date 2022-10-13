@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import javax.inject.Singleton;
@@ -26,78 +27,82 @@ import io.micronaut.scheduling.annotation.Scheduled;
 @Singleton
 public class LcdStatusMessageService {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private LcdStatusMessageProducer lcdStatusMessageProducer;
+    private LcdStatusMessageProducer lcdStatusMessageProducer;
 
-	private HeatingControlContext heatingControlContext;
+    private HeatingControlContext heatingControlContext;
 
-	private PumpState pumpState;
+    private PumpState pumpState;
 
-	private DateTimeFormatter formatter;
+    private DateTimeFormatter formatter;
 
-	/**
-	 * 
-	 * @param lcdStatusMessageProducer
-	 * @param heatingControlContext
-	 */
-	public LcdStatusMessageService(
-			LcdStatusMessageProducer lcdStatusMessageProducer,
-			HeatingControlContext heatingControlContext,
-			PumpState pumpState) {
-		this.lcdStatusMessageProducer = lcdStatusMessageProducer;
-		this.heatingControlContext = heatingControlContext;
-		this.pumpState = pumpState;
+    /**
+     * @param lcdStatusMessageProducer
+     * @param heatingControlContext
+     */
+    public LcdStatusMessageService(
+            LcdStatusMessageProducer lcdStatusMessageProducer,
+            HeatingControlContext heatingControlContext,
+            PumpState pumpState) {
+        this.lcdStatusMessageProducer = lcdStatusMessageProducer;
+        this.heatingControlContext = heatingControlContext;
+        this.pumpState = pumpState;
 
-		formatter = DateTimeFormatter.ISO_LOCAL_TIME;
-	}
+        formatter = DateTimeFormatter.ISO_LOCAL_TIME;
+    }
 
-	@Scheduled(fixedDelay = "3s")
-	public void PublishToLcd() {
-		String text;
-		// -- Check if Shutdown requestet...
-		if (heatingControlContext.isShutdownRequestet()
-				&& !pumpState.isPumpGarage()
-				&& !pumpState.isPumpHeating()) {
-			text = "1=     HC3";
-			lcdStatusMessageProducer.send(text.getBytes());
-			text = "2=.....AUSSCHALTEN.....";
-			lcdStatusMessageProducer.send(text.getBytes());
-			logger.info("Send Shutdown Message to LCD...");
-			return;
-		}
-		// -- Build Status Messages...
-		Instant instant = Instant.now();
-		ZoneId zoneId = ZoneId.of( "Europe/Berlin" );
-		ZonedDateTime zdt = ZonedDateTime.ofInstant( instant , zoneId );
-		text = "1=HC3->" + zdt.format(formatter);
-		logger.info("Sending {} to lcd queue " + text);
-		lcdStatusMessageProducer.send(text.getBytes());
-		// --
-		text = "2=Ofen:" + heatingControlContext.getTemp_combustionChamber()
-				+ " Buffer:" + heatingControlContext.getBufferTemperature();
-		logger.info("Sending {} to lcd queue " + text);
-		lcdStatusMessageProducer.send(text.getBytes());
-		// --
-		text = "3=Garage:" + heatingControlContext.getGarageTemperature();
-		logger.info("Sending {} to lcd queue " + text);
-		lcdStatusMessageProducer.send(text.getBytes());
-		// --
-		text = "4=Ofen:";
-		if (pumpState.isPumpHeating()) {
-			text += "ON";
-		} else {
-			text += "OFF";
-		}
-		text += " Buffer:";
-		if (pumpState.isPumpGarage()) {
-			text += "ON";
-		} else {
-			text += "OFF";
-		}
-		logger.info("Sending {} to lcd queue " + text);
-		lcdStatusMessageProducer.send(text.getBytes());
-
-	}
+    @Scheduled(fixedDelay = "3s")
+    public void PublishToLcd() {
+        String text;
+        // -- Check if Shutdown requestet...
+        if (heatingControlContext.isShutdownRequestet()
+                && !pumpState.isPumpGarage()
+                && !pumpState.isPumpHeating()) {
+            text = "1=     HC3";
+            lcdStatusMessageProducer.send(text.getBytes());
+            text = "2=.....AUSSCHALTEN.....";
+            lcdStatusMessageProducer.send(text.getBytes());
+            logger.info("Send Shutdown Message to LCD...");
+            return;
+        }
+        // -- Build Status Messages...
+        Instant instant = Instant.now();
+        ZoneId zoneId = ZoneId.of("Europe/Berlin");
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, zoneId);
+        text = "1=HC3->" + zdt.truncatedTo(ChronoUnit.SECONDS).format(formatter);
+        logger.info("Sending {} to lcd queue " + text);
+        lcdStatusMessageProducer.send(text.getBytes());
+        // --
+        text = "2=Ofen:" + heatingControlContext.getTemp_combustionChamber()
+                + " Buffer:" + heatingControlContext.getBufferTemperature();
+        logger.info("Sending {} to lcd queue " + text);
+        lcdStatusMessageProducer.send(text.getBytes());
+        // --
+        text = "3=Garage:" + heatingControlContext.getGarageTemperature();
+        logger.info("Sending {} to lcd queue " + text);
+        lcdStatusMessageProducer.send(text.getBytes());
+        // --
+        text = "4=Ofn:";
+        if (pumpState.isPumpHeating()) {
+            text += "O";
+        } else {
+            text += "X";
+        }
+        text += " Puff:";
+        if (pumpState.isPumpGarage()) {
+            text += "O";
+        } else {
+            text += "X";
+        }
+        text += " Haus:";
+        if (pumpState.isPumpMainCircuit()) {
+            text += "O";
+        } else {
+            text += "X";
+        }
+        logger.info("Sending {} to lcd queue " + text);
+        lcdStatusMessageProducer.send(text.getBytes());
+    }
 
 }
