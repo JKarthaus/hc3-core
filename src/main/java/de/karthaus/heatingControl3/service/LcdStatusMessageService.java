@@ -74,28 +74,31 @@ public class LcdStatusMessageService {
         logger.info("Sending {} to lcd queue " + text);
         lcdStatusMessageProducer.send(text.getBytes());
         // --
-        text = "2=Ofen:" + heatingControlContext.getTemp_combustionChamber()
-                + " Buffer:" + heatingControlContext.getBufferTemperature();
+        text = "2="
+                + "Of:"
+                + String.format("%.1f", heatingControlContext.getTemp_combustionChamber())
+                + "Pu:"
+                + String.format("%.1f", heatingControlContext.getBufferTemperature());
         logger.info("Sending {} to lcd queue " + text);
         lcdStatusMessageProducer.send(text.getBytes());
         // --
-        text = "3=Garage:" + heatingControlContext.getGarageTemperature();
+        text = "3=Garage:" + String.format("%.1f", heatingControlContext.getGarageTemperature());
         logger.info("Sending {} to lcd queue " + text);
         lcdStatusMessageProducer.send(text.getBytes());
         // --
-        text = "4=Ofn:";
+        text = "4=Of:";
         if (pumpState.isPumpHeating()) {
             text += "O";
         } else {
             text += "X";
         }
-        text += " Puff:";
+        text += " Pu:";
         if (pumpState.isPumpGarage()) {
             text += "O";
         } else {
             text += "X";
         }
-        text += " Haus:";
+        text += " Hau:";
         if (pumpState.isPumpMainCircuit()) {
             text += "O";
         } else {
