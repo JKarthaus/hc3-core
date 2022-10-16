@@ -77,7 +77,7 @@ public class LcdStatusMessageService {
         text = "2="
                 + "Of:"
                 + String.format("%.1f", heatingControlContext.getTemp_combustionChamber())
-                + "Pu:"
+                + " Pu:"
                 + String.format("%.1f", heatingControlContext.getBufferTemperature());
         logger.info("Sending {} to lcd queue " + text);
         lcdStatusMessageProducer.send(text.getBytes());
@@ -88,21 +88,21 @@ public class LcdStatusMessageService {
         // --
         text = "4=Of:";
         if (pumpState.isPumpHeating()) {
-            text += "O";
+            text += "+";
         } else {
-            text += "X";
+            text += "-";
         }
         text += " Pu:";
         if (pumpState.isPumpGarage()) {
-            text += "O";
+            text += "+";
         } else {
-            text += "X";
+            text += "-";
         }
         text += " Hau:";
         if (pumpState.isPumpMainCircuit()) {
-            text += "O";
+            text += "+";
         } else {
-            text += "X";
+            text += "-";
         }
         logger.info("Sending {} to lcd queue " + text);
         lcdStatusMessageProducer.send(text.getBytes());
