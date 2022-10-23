@@ -12,7 +12,7 @@ echo "Build and Push Docker"
 
 cowsay "Build with Gradle"
 
-./gradlew build
+./gradlew clean build
 gradlew_return_code=$?
 
 if ((gradlew_return_code != 0)); then

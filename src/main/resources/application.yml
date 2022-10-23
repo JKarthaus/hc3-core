@@ -1,6 +1,13 @@
 micronaut:
   application:
     name: hc3-core
+  router:
+    static-resources:
+      default:
+        enabled: true
+        mapping: "/**"
+        paths: file:/home/jkarthaus/git/hc3-gui/dist/hc3-gui/
+
 # Message Bus configuration - DEV Enviroment
 rabbitmq:
   host: hc3-werkstatt

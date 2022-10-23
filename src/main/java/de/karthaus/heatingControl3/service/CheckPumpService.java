@@ -1,15 +1,13 @@
 package de.karthaus.heatingControl3.service;
 
-import javax.inject.Singleton;
-
+import de.karthaus.heatingControl3.model.HeatingControlContext;
 import de.karthaus.heatingControl3.model.PumpState;
+import io.micronaut.context.annotation.Value;
+import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.karthaus.heatingControl3.model.HeatingControlContext;
-import io.micronaut.context.annotation.Value;
-import io.micronaut.scheduling.annotation.Scheduled;
-
+import javax.inject.Singleton;
 import java.time.LocalTime;
 
 
@@ -21,6 +19,11 @@ import java.time.LocalTime;
  */
 @Singleton
 public class CheckPumpService {
+
+    public static final String MANUAL_PUMP_STATE_ON = "on";
+    public static final String MANUAL_PUMP_STATE_OFF = "off";
+    public static final String MANUAL_PUMP_STATE_AUTO = "auto";
+
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -39,6 +42,7 @@ public class CheckPumpService {
     @Value("${hc3.pump.main-circuit.time-range-until}")
     protected String mainCircuitPumpTimeRangeUntil;
 
+    private String manualPumpState;
 
     private HeatingControlContext heatingControlContext;
     private PumpState pumpState;
@@ -51,12 +55,27 @@ public class CheckPumpService {
             PumpState pumpState) {
         this.heatingControlContext = heatingControlContext;
         this.pumpState = pumpState;
+        this.manualPumpState = MANUAL_PUMP_STATE_AUTO;
     }
 
     public boolean checkCanShutdown() {
         boolean result = false;
         //TODO : implement this
         return result;
+    }
+
+    public String getManualPumpState() {
+        return manualPumpState;
+    }
+
+    public void setManualPumpState(String manualPumpState) {
+        this.manualPumpState = manualPumpState;
+        if (this.manualPumpState.equalsIgnoreCase(MANUAL_PUMP_STATE_ON)) {
+            pumpState.setPumpMainCircuit(true);
+        }
+        if (this.manualPumpState.equalsIgnoreCase(MANUAL_PUMP_STATE_OFF)) {
+            pumpState.setPumpMainCircuit(false);
+        }
     }
 
     /**
@@ -108,6 +127,8 @@ public class CheckPumpService {
         /*
          * Condition for mainCircuitPump
          *
+         * if state = automatic
+         *
          * if   temperatureBuffer > minMainCircuitTemp
          *      AND actualTime > minTimeRange
          *      AND actualTime < maxTimeRange
@@ -115,22 +136,26 @@ public class CheckPumpService {
          * else
          *          mainCircuitPump ->  OFF
          */
-        if (heatingControlContext.getBufferTemperature() > mainCircuitPumpSwitchOnTemp
-                && LocalTime.now().isAfter(LocalTime.parse(mainCircuitPumpTimeRangeFrom))
-                && LocalTime.now().isBefore(LocalTime.parse(mainCircuitPumpTimeRangeUntil))
-        ) {
-            pumpState.setPumpMainCircuit(Boolean.TRUE);
-            logger.info("Pump mainCircuit -> ON because we are in time range from:{} until:{} and temp Buffer > {}",
-                    mainCircuitPumpTimeRangeFrom,
-                    mainCircuitPumpTimeRangeUntil,
-                    mainCircuitPumpSwitchOnTemp);
-        } else {
-            pumpState.setPumpMainCircuit(Boolean.FALSE);
-            logger.info("Pump mainCircuit -> OFF because we are out of time range from:{} until:{} or temp Buffer < {}",
-                    mainCircuitPumpTimeRangeFrom,
-                    mainCircuitPumpTimeRangeUntil,
-                    mainCircuitPumpSwitchOnTemp);
+        if (this.manualPumpState.equalsIgnoreCase(MANUAL_PUMP_STATE_AUTO)) {
+            if (heatingControlContext.getBufferTemperature() > mainCircuitPumpSwitchOnTemp
+                    && LocalTime.now().isAfter(LocalTime.parse(mainCircuitPumpTimeRangeFrom))
+                    && LocalTime.now().isBefore(LocalTime.parse(mainCircuitPumpTimeRangeUntil))
+            ) {
+                pumpState.setPumpMainCircuit(Boolean.TRUE);
+                logger.info("Pump mainCircuit -> ON because we are in time range from:{} until:{} and temp Buffer > {}",
+                        mainCircuitPumpTimeRangeFrom,
+                        mainCircuitPumpTimeRangeUntil,
+                        mainCircuitPumpSwitchOnTemp);
+            } else {
+                pumpState.setPumpMainCircuit(Boolean.FALSE);
+                logger.info("Pump mainCircuit -> OFF because we are out of time range from:{} until:{} or temp Buffer < {}",
+                        mainCircuitPumpTimeRangeFrom,
+                        mainCircuitPumpTimeRangeUntil,
+                        mainCircuitPumpSwitchOnTemp);
 
+            }
+        } else {
+            logger.info("MainCircuitPump is NOT in Automatic Mode -> State is: Manually:{}", getManualPumpState());
         }
     }
 }

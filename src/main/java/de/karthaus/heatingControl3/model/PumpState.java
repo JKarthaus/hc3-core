@@ -5,6 +5,8 @@ import javax.inject.Singleton;
 @Singleton
 public class PumpState {
 
+
+
     /*
      * Pump between Heating and Buffer
      */
@@ -42,7 +44,7 @@ public class PumpState {
     }
 
     public PumpState setPumpMainCircuit(boolean pumpMainCircuit) {
-        this.pumpMainCircuit = pumpMainCircuit;
+        this.pumpMainCircuit = pumpMainCircuit ;
         return this;
     }
 }
