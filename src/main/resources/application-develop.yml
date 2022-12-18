@@ -1,8 +1,8 @@
 micronaut:
   server:
-    port:8080
+    port: 8080
   router:
     static-resources:
       default:
-        paths: file:/webGui/
+        paths: file:${HOME}/git/hc3-gui/dist/hc3-gui/
 
