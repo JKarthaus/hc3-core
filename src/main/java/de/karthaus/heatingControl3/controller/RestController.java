@@ -86,6 +86,7 @@ public class RestController {
         result.setTemp_combustionChamber(heatingControlContext.getTemp_combustionChamber());
         result.setGarageTemperature(heatingControlContext.getGarageTemperature());
         result.setBufferTemperature(heatingControlContext.getBufferTemperature());
+        result.setOutdoorTemperature(heatingControlContext.getOutdoorTemperature());
         result.setFlowPumpON(pumpState.isPumpHeating());
         result.setGaragePumpON(pumpState.isPumpGarage());
         result.setMainCircuitPumpON(pumpState.isPumpMainCircuit());
@@ -100,11 +101,21 @@ public class RestController {
         private double bufferTemperature;
         private double garageTemperature;
 
+        private double outdoorTemperature;
+
         private boolean flowPumpON;
         private boolean garagePumpON;
 
 
         private boolean mainCircuitPumpON;
+
+        public double getOutdoorTemperature() {
+            return outdoorTemperature;
+        }
+
+        public void setOutdoorTemperature(double outdoorTemperature) {
+            this.outdoorTemperature = outdoorTemperature;
+        }
 
         public double getTemp_combustionChamber() {
             return temp_combustionChamber;

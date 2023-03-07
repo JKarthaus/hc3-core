@@ -30,6 +30,7 @@ hc3:
     return-line: not_installed
     buffer: 28-0214631220ff
     garage: 28-03146209ceff
+    outdoor: 28-0314624567ff
   pump:
     garage:
       relais-id: 1

@@ -5,61 +5,74 @@ import javax.inject.Singleton;
 @Singleton
 public class HeatingControlContext {
 
-	private boolean shutdownRequestet;
-	private double temp_combustionChamber;
-	private double flowTemperature;
-	private double returnTemperature;
+    private boolean shutdownRequestet;
+    private double temp_combustionChamber;
+    private double flowTemperature;
+    private double returnTemperature;
 
-	private double garageTemperature;
+    private double garageTemperature;
 
-	private double bufferTemperature;
+    private double bufferTemperature;
 
-	public double getTemp_combustionChamber() {
-		return temp_combustionChamber;
-	}
 
-	public void setTemp_combustionChamber(double temp_combustionChamber) {
-		this.temp_combustionChamber = temp_combustionChamber;
-	}
+    private double outdoorTemperature;
 
-	public double getFlowTemperature() {
-		return flowTemperature;
-	}
 
-	public void setFlowTemperature(double flowTemperature) {
-		this.flowTemperature = flowTemperature;
-	}
+    public double getOutdoorTemperature() {
+        return outdoorTemperature;
+    }
 
-	public double getReturnTemperature() {
-		return returnTemperature;
-	}
+    public void setOutdoorTemperature(double outdoorTemperature) {
+        this.outdoorTemperature = outdoorTemperature;
+    }
 
-	public void setReturnTemperature(double returnTemperature) {
-		this.returnTemperature = returnTemperature;
-	}
 
-	public double getGarageTemperature() {
-		return garageTemperature;
-	}
+    public double getTemp_combustionChamber() {
+        return temp_combustionChamber;
+    }
 
-	public void setGarageTemperature(double garageTemperature) {
-		this.garageTemperature = garageTemperature;
-	}
+    public void setTemp_combustionChamber(double temp_combustionChamber) {
+        this.temp_combustionChamber = temp_combustionChamber;
+    }
 
-	public double getBufferTemperature() {
-		return bufferTemperature;
-	}
+    public double getFlowTemperature() {
+        return flowTemperature;
+    }
 
-	public void setBufferTemperature(double bufferTemperature) {
-		this.bufferTemperature = bufferTemperature;
-	}
+    public void setFlowTemperature(double flowTemperature) {
+        this.flowTemperature = flowTemperature;
+    }
 
-	public boolean isShutdownRequestet() {
-		return shutdownRequestet;
-	}
+    public double getReturnTemperature() {
+        return returnTemperature;
+    }
 
-	public void setShutdownRequestet(boolean shutdownRequestet) {
-		this.shutdownRequestet = shutdownRequestet;
-	}
+    public void setReturnTemperature(double returnTemperature) {
+        this.returnTemperature = returnTemperature;
+    }
+
+    public double getGarageTemperature() {
+        return garageTemperature;
+    }
+
+    public void setGarageTemperature(double garageTemperature) {
+        this.garageTemperature = garageTemperature;
+    }
+
+    public double getBufferTemperature() {
+        return bufferTemperature;
+    }
+
+    public void setBufferTemperature(double bufferTemperature) {
+        this.bufferTemperature = bufferTemperature;
+    }
+
+    public boolean isShutdownRequestet() {
+        return shutdownRequestet;
+    }
+
+    public void setShutdownRequestet(boolean shutdownRequestet) {
+        this.shutdownRequestet = shutdownRequestet;
+    }
 
 }

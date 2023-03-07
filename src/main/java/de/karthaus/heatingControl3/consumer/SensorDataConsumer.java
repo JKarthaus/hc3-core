@@ -40,6 +40,9 @@ public class SensorDataConsumer {
     @Value("${hc3.sensor.garage}")
     protected String garageSensorId;
 
+    @Value("${hc3.sensor.outdoor}")
+    protected String outdoorSensorId;
+
     /**
      * @param heatingControlContext
      */
@@ -84,6 +87,11 @@ public class SensorDataConsumer {
             heatingControlContext.setGarageTemperature(new Double(new String(data)));
             map = true;
             logger.debug("Receive Garage temp {}", heatingControlContext.getGarageTemperature());
+        }
+        if (envelope.getRoutingKey().equalsIgnoreCase(outdoorSensorId)) {
+            heatingControlContext.setOutdoorTemperature(new Double(new String(data)));
+            map = true;
+            logger.debug("Receive outdoor temp {}", heatingControlContext.getOutdoorTemperature());
         }
 
         // Data can not be mapped
