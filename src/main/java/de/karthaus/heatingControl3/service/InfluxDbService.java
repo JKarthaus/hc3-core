@@ -81,6 +81,12 @@ public class InfluxDbService {
         temperature.value = heatingControlContext.getTemp_combustionChamber();
         temperature.time = Instant.now();
         writeApi.writeMeasurement(WritePrecision.NS, temperature);
+        //-
+        temperature = new InfluxTemperature();
+        temperature.location = "outdoorTemp";
+        temperature.value = heatingControlContext.getOutdoorTemperature();
+        temperature.time = Instant.now();
+        writeApi.writeMeasurement(WritePrecision.NS, temperature);
         // --------------
         InfluxPumpState influxPumpState = new InfluxPumpState();
         if (pumpState.isPumpHeating()) {
